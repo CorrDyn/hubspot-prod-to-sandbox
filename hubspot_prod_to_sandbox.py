@@ -660,7 +660,7 @@ class HubspotSandboxMigrator:
                     properties=properties
                 )
                 try:
-                    api_response = sanbox_client.basic_api.create(
+                    api_response = sandbox_client.basic_api.create(
                         simple_public_object_input=simple_public_object_input
                     )
                     result = api_response.to_dict()
