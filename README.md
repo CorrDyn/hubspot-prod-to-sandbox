@@ -79,7 +79,7 @@ python -m ipykernel install --user --name=venv
 # so you will need to run this command in any new shell session.
 source ./venv/bin/activate
 # Run your migrator from production to sandbox
-python run_migrator.py --production your_production_api_key --sandbox your_sandbox_api_key --limit 2 --associations True --fake-data True --object contacts
+python run_migrator.py --production hubspot_prod_api_key --sandbox hubspot_sandbox_api_key --limit 2 --associations True --fake-data True --object contacts
 ```
 
 ##### Cleaning up your sandbox objects at the command line
@@ -87,7 +87,7 @@ python run_migrator.py --production your_production_api_key --sandbox your_sandb
 # so you will need to run this command in any new shell session.
 source ./venv/bin/activate
 # Run your cleanup
-python run_clean_up.py --production your_production_api_key --sandbox your_sandbox_api_key
+python run_clean_up.py --production hubspot_prod_api_key --sandbox hubspot_sandbox_api_key
 ```
 
 ### 3. Run it your way :) 
