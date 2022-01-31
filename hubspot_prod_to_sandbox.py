@@ -128,6 +128,8 @@ class HubspotSandboxMigrator:
         return hs_object_client
 
     def get_record_by_id(self, environment, hs_object, object_id):
+        
+        time.sleep(.4)
 
         hs_object_client = self.get_hubspot_client(hs_object, environment=environment)
 
@@ -195,6 +197,7 @@ class HubspotSandboxMigrator:
 
     def delete_record_by_id(self, hs_object, object_id):
         """Only available for sandbox"""
+        time.sleep(.4)
 
         hs_object_client = self.get_hubspot_client(hs_object, environment="sandbox")
 
@@ -289,6 +292,7 @@ class HubspotSandboxMigrator:
         record_chunk_list = chunks(list_of_object_properties, 10)
 
         for chunk in record_chunk_list:
+            time.sleep(.4)
             batch_input_simple_public_object_input = BatchInputSimplePublicObjectInput(
                 inputs=chunk
             )
@@ -304,7 +308,8 @@ class HubspotSandboxMigrator:
         return results
 
     def create_sandbox_record_from_prod_record(self, hs_object, properties, prod_id):
-
+        
+        time.sleep(.4)
         hs_object_client = self.get_hubspot_client(hs_object, environment="sandbox")
         portal_id = self.sandbox_portal_id
 
@@ -619,6 +624,7 @@ class HubspotSandboxMigrator:
             limit=1,
         )
         try:
+            time.sleep(.4)
             api_response = sandbox_client.search_api.do_search(
                 public_object_search_request=public_object_search_request
             )
@@ -660,6 +666,7 @@ class HubspotSandboxMigrator:
                     properties=properties
                 )
                 try:
+                    time.sleep(.25)
                     api_response = sandbox_client.basic_api.create(
                         simple_public_object_input=simple_public_object_input
                     )
@@ -777,6 +784,7 @@ class HubspotSandboxMigrator:
                 inputs=input_sandbox_associations
             )
             try:
+                time.sleep(.4)
                 api_response = sandbox_client.crm.associations.batch_api.create(
                     from_object_type=association_row["from_object"],
                     to_object_type=association_row["to_object"],
@@ -831,6 +839,7 @@ class HubspotSandboxMigrator:
                 inputs=input_sandbox_associations
             )
             try:
+                time.sleep(.4)
                 api_response = sandbox_client.crm.associations.batch_api.archive(
                     from_object_type=association_row["from_object"],
                     to_object_type=association_row["to_object"],

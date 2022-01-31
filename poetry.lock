@@ -100,12 +100,21 @@ pytz = ">=2015.7"
 tzlocal = ">=1.2"
 
 [[package]]
-name = "hubspot"
-version = "0.1.14dev"
-description = "UNKNOWN"
+name = "hubspot-api-client"
+version = "4.0.6"
+description = "HubSpot API client"
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.5"
+
+[package.dependencies]
+certifi = "*"
+python-dateutil = "*"
+six = ">=1.10"
+urllib3 = ">=1.15"
+
+[package.extras]
+dev = ["pytest", "black"]
 
 [[package]]
 name = "humanize"
@@ -327,7 +336,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "61985628d7182d5c47a4a374aef143e9f5b067d149a7253fbce7de2813a997f2"
+content-hash = "1bb758aabf0261c9953df80568dba811bbec6537a8731367d819980cc8bb81b9"
 
 [metadata.files]
 babel = [
@@ -375,9 +384,9 @@ colorama = [
 delorean = [
     {file = "Delorean-1.0.0.tar.gz", hash = "sha256:fe67786e12338523848bec5588a658c4d425e12d53eb51cfef870bec8f576134"},
 ]
-hubspot = [
-    {file = "hubspot-0.1.14dev.macosx-10.9-intel.exe", hash = "sha256:aba0deda0103a9e57a154c28c1aaed63252d2b0e7f694dd23f5e277c4d3dbf06"},
-    {file = "hubspot-0.1.14dev.tar.gz", hash = "sha256:84e4dacd4370f914be83793c61817677062e3970c26f14bf2d553f6049c578e5"},
+hubspot-api-client = [
+    {file = "hubspot-api-client-4.0.6.tar.gz", hash = "sha256:621195df4ce231a62bb39739384536441fef0abdede0134b84914b19d3033985"},
+    {file = "hubspot_api_client-4.0.6-py3-none-any.whl", hash = "sha256:45d693b273d5b8fe146f78c80f9aca8191eadf24767269f23a222805196ca539"},
 ]
 humanize = [
     {file = "humanize-3.13.1-py3-none-any.whl", hash = "sha256:a6f7cc1597db69a4e571ad5e19b4da07ee871da5a9de2b233dbfab02d98e9754"},

@@ -10,7 +10,7 @@
 3. An API Key from a Sandbox Hubspot Instance, called the `hubspot_sandbox_api_key` in code examples
 4. The ability to run Python locally or remotely
 
-## How to Set Up
+## How to Set Up Your Environment
 
 ```bash
 git clone https://github.com/CorrDyn/hubspot-prod-to-sandbox.git
@@ -59,6 +59,39 @@ migrator.migrate_object(hs_object='contacts', ### What do you want to be your An
 ```python
 migrator.clean_up()
 ```
+
+## Ways to Run
+
+### 1. Run from Jupyter Notebook (using your virtual environment)
+Just open up How_to_Use.ipynb with your new venv kernel and insert your credentials. 
+
+Command Line Instructions on how to add the virtual enviroment you created above to your Jupyter notebook are shown below.
+
+```bash
+pip install --user ipykernel
+python -m ipykernel install --user --name=venv
+```
+
+### 2. Run from the Command Line (in your virtual environment)
+
+##### Migrating your objects at the command line
+```bash
+# so you will need to run this command in any new shell session.
+source ./venv/bin/activate
+# Run your migrator from production to sandbox
+python run_migrator.py --production your_production_api_key --sandbox your_sandbox_api_key --limit 2 --associations True --fake-data True --object contacts
+```
+
+##### Cleaning up your sandbox objects at the command line
+```bash
+# so you will need to run this command in any new shell session.
+source ./venv/bin/activate
+# Run your cleanup
+python run_clean_up.py --production your_production_api_key --sandbox your_sandbox_api_key
+```
+
+### 3. Run it your way :) 
+
 
 ## Things to Keep in Mind
 

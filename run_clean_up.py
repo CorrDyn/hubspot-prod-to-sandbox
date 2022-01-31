@@ -1,13 +1,33 @@
+import argparse
+
 from hubspot_prod_to_sandbox import HubspotSandboxMigrator
 
-hubspot_sandbox_api_key = 'your_sandbox_api_key'
-hubspot_prod_api_key = 'your_prod_api_key'
+parser = argparse.ArgumentParser(
+    description="Script for cleaning up previous hubspot prod to sandbox migration using this sandbox in this environment."
+)
 
-migrator = HubspotSandboxMigrator(hubspot_prod_api_key,hubspot_sandbox_api_key)
+parser.add_argument(
+    "-p",
+    "--production",
+    required=True,
+    action="store",
+    dest="hubspot_production_api_key",
+    help="Your Hubspot Production API key",
+)
 
-# migrator.migrate_object(hs_object='contacts',
-#                         limit=2,
-#                         include_associations=True,
-#                         fake_data=True)
+parser.add_argument(
+    "-s",
+    "--sandbox",
+    required=True,
+    action="store",
+    dest="hubspot_sandbox_api_key",
+    help="Your Hubspot Sandbox API Key",
+)
+
+args = parser.parse_args()
+
+migrator = HubspotSandboxMigrator(
+    args.hubspot_production_api_key, args.hubspot_sandbox_api_key
+)
 
 migrator.clean_up()
