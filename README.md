@@ -111,6 +111,7 @@ I hope this is useful to you! I know it would have saved me a lot of time...
 ### To Do List
 - Account for custom objects
 - Test tickets and quotes to make sure they operate as expected
+- Make it so that running the migrator multiple times without cleaning up doesn't migrate the same objects over and over (because of the order in which Hubspot returns the objects)
 
 
 
