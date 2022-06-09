@@ -49,12 +49,20 @@ def show_time(func):
 
 def is_sandbox(api_key):
     r = requests.get("https://api.hubapi.com/integrations/v1/me?hapikey=" + api_key)
-    return r.json()["accountType"] == "SANDBOX"
+    try:
+      return r.json()["accountType"] == "SANDBOX"
+    except KeyError as e:
+      print("KeyError with response JSON")
+      return r.content
 
 
 def is_production(api_key):
     r = requests.get("https://api.hubapi.com/integrations/v1/me?hapikey=" + api_key)
-    return r.json()["accountType"] == "STANDARD"
+    try:
+      return r.json()["accountType"] == "STANDARD"
+    except KeyError as e:
+      print("KeyError with response JSON")
+      return r.content
 
 
 def get_portal_id(api_key):
