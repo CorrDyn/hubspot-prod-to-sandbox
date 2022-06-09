@@ -53,7 +53,10 @@ def is_sandbox(api_key):
       return r.json()["accountType"] == "SANDBOX"
     except KeyError as e:
       print("KeyError with response JSON")
-      return r.content
+      print(r.content)
+      raise
+    else:
+      raise
 
 
 def is_production(api_key):
@@ -62,7 +65,11 @@ def is_production(api_key):
       return r.json()["accountType"] == "STANDARD"
     except KeyError as e:
       print("KeyError with response JSON")
-      return r.content
+      print(r.content)
+      raise
+    else:
+      raise
+      
 
 
 def get_portal_id(api_key):
