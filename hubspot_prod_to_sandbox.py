@@ -606,11 +606,15 @@ class HubspotSandboxMigrator:
                                 "from_object": result["type"]
                                 .split("_to_")[0]
                                 .replace("y", "ie")
-                                + "s",
+                                .replace("_unlabeled","")
+                                + "s"
+                                ,
                                 "to_object": result["type"]
                                 .split("_to_")[1]
                                 .replace("y", "ie")
-                                + "s",
+                                .replace("_unlabeled","")
+                                + "s"
+                                ,
                                 "hs_association_string": result["type"],
                             }
                         )
