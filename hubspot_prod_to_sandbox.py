@@ -47,8 +47,16 @@ def show_time(func):
     return wrapper
 
 
-def is_sandbox(api_key):
-    r = requests.get("https://api.hubapi.com/integrations/v1/me?hapikey=" + api_key)
+def is_sandbox(access_token):
+    url = "https://api.hubapi.com/account-info/v3/details"
+
+    headers = {
+        'accept': "application/json",
+        'authorization': f"Bearer {access_token}"
+        }
+
+    r = requests.request("GET", url, headers=headers)
+
     try:
       return r.json()["accountType"] == "SANDBOX"
     except KeyError as e:
@@ -59,8 +67,15 @@ def is_sandbox(api_key):
       raise
 
 
-def is_production(api_key):
-    r = requests.get("https://api.hubapi.com/integrations/v1/me?hapikey=" + api_key)
+def is_production(access_token):
+    url = "https://api.hubapi.com/account-info/v3/details"
+
+    headers = {
+        'accept': "application/json",
+        'authorization': f"Bearer {access_token}"
+        }
+
+    r = requests.request("GET", url, headers=headers)
     try:
       return r.json()["accountType"] == "STANDARD"
     except KeyError as e:
@@ -72,8 +87,15 @@ def is_production(api_key):
       
 
 
-def get_portal_id(api_key):
-    r = requests.get("https://api.hubapi.com/integrations/v1/me?hapikey=" + api_key)
+def get_portal_id(access_token):
+    url = "https://api.hubapi.com/account-info/v3/details"
+
+    headers = {
+        'accept': "application/json",
+        'authorization': f"Bearer {access_token}"
+        }
+
+    r = requests.request("GET", url, headers=headers)
     return r.json()["portalId"]
 
 
@@ -94,17 +116,17 @@ def chunks(l, n):
 class HubspotSandboxMigrator:
     """Class for migrating data from Hubspot prod to Hubspot sandbox, given API keys for both"""
 
-    def __init__(self, prod_api_key, sandbox_api_key):
-        self.prod_api_key = prod_api_key
-        self.sandbox_api_key = sandbox_api_key
+    def __init__(self, prod_access_token, sandbox_access_token):
+        self.prod_access_token = prod_access_token
+        self.sandbox_access_token = sandbox_access_token
         self.object_config = object_config
 
-        if not is_sandbox(sandbox_api_key):
+        if not is_sandbox(sandbox_access_token):
             raise ValueError(
                 f"Sandbox API Key provided is not for a sandbox Hubspot instance!"
             )
 
-        if not is_production(prod_api_key):
+        if not is_production(prod_access_token):
             raise ValueError(
                 f"Prod API Key provided is not for a production Hubspot instance!"
             )
@@ -114,8 +136,8 @@ class HubspotSandboxMigrator:
                 f"Every object in the Object Config must have a list or properties associated with it. Please review the example object_config."
             )
 
-        self.prod_portal_id = get_portal_id(prod_api_key)
-        self.sandbox_portal_id = get_portal_id(sandbox_api_key)
+        self.prod_portal_id = get_portal_id(prod_access_token)
+        self.sandbox_portal_id = get_portal_id(sandbox_access_token)
 
     def __repr__(self):
         return f"{self.__class__.__name__} for Sandbox Instance {self.sandbox_portal_id} and Prod Instance {self.prod_portal_id}"
@@ -123,9 +145,9 @@ class HubspotSandboxMigrator:
     def get_hubspot_client(self, hs_object, environment="sandbox"):
 
         if environment == "sandbox":
-            hs_client = hubspot.Client.create(api_key=self.sandbox_api_key)
+            hs_client = hubspot.Client.create(access_token=self.sandbox_access_token)
         elif environment in ["prod", "production"]:
-            hs_client = hubspot.Client.create(api_key=self.prod_api_key)
+            hs_client = hubspot.Client.create(access_token=self.prod_access_token)
 
         if hs_object == "companies":
             hs_object_client = hs_client.crm.companies
@@ -585,7 +607,7 @@ class HubspotSandboxMigrator:
         return self.object_config[hs_object]["properties"]
 
     def get_properties(self, hs_object):
-        hs_client = hubspot.Client.create(api_key=self.prod_api_key)
+        hs_client = hubspot.Client.create(access_token=self.prod_access_token)
         return pd.DataFrame(
             hs_client.crm.properties.core_api.get_all(
                 object_type=hs_object, archived=False
@@ -606,11 +628,15 @@ class HubspotSandboxMigrator:
                                 "from_object": result["type"]
                                 .split("_to_")[0]
                                 .replace("y", "ie")
-                                + "s",
+                                .replace("_unlabeled","")
+                                + "s"
+                                ,
                                 "to_object": result["type"]
                                 .split("_to_")[1]
                                 .replace("y", "ie")
-                                + "s",
+                                .replace("_unlabeled","")
+                                + "s"
+                                ,
                                 "hs_association_string": result["type"],
                             }
                         )
@@ -661,8 +687,8 @@ class HubspotSandboxMigrator:
         sandbox_client = self.get_hubspot_client(hs_object, environment="sandbox")
 
         try:
-            api_response = prod_client.basic_api.get_page(limit=100, archived=False)
-            results_json = api_response.to_dict()["results"]
+            api_response = prod_client.get_all()
+            results_json = [j.to_dict() for j in api_response]
         except ApiException as e:
             print("Exception when calling basic_api->get_page: %s\n" % e)
 
@@ -793,7 +819,7 @@ class HubspotSandboxMigrator:
                 }
                 input_sandbox_associations.append(new_rec)
 
-            sandbox_client = hubspot.Client.create(api_key=self.sandbox_api_key)
+            sandbox_client = hubspot.Client.create(access_token=self.sandbox_access_token)
 
             batch_input_public_association = BatchInputPublicAssociation(
                 inputs=input_sandbox_associations
@@ -849,7 +875,7 @@ class HubspotSandboxMigrator:
                 }
                 input_sandbox_associations.append(new_rec)
 
-            sandbox_client = hubspot.Client.create(api_key=self.sandbox_api_key)
+            sandbox_client = hubspot.Client.create(access_token=self.sandbox_access_token)
             batch_input_public_association = BatchInputPublicAssociation(
                 inputs=input_sandbox_associations
             )
@@ -959,7 +985,7 @@ class HubspotSandboxMigrator:
 
         print("Confirming that Sandbox API Key is for a Hubspot Sandbox Instance")
         try:
-            assert is_sandbox(self.sandbox_api_key)
+            assert is_sandbox(self.sandbox_access_token)
         except Exception as ex:
             print(
                 "API Key provided for Sandbox is not actually a Sandbox Hubspot Instance"
@@ -968,7 +994,7 @@ class HubspotSandboxMigrator:
 
         print("Confirming that Prod API Key is for a Hubspot Production Instance")
         try:
-            assert is_production(self.prod_api_key)
+            assert is_production(self.prod_access_token)
         except Exception as ex:
             print(
                 "API Key provided for Prod is not actually a Production Hubspot Instance"
