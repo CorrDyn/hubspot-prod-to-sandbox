@@ -10,7 +10,7 @@
 3. An Access Token from a [private app](https://developers.hubspot.com/docs/api/private-apps) in the Sandbox Hubspot Instance, called the `hubspot_sandbox_access_token` in code examples
 4. The ability to run Python locally or remotely
 
-Note that your private app will need to have all of the [required scopes](https://developers.hubspot.com/docs/api/working-with-oauth#scopes) to read all of the production objects and write all the sandbox objects you intend to migrate. I recommend including `e-commerce` scopes in both apps as well because that gives your private app access to products and line_items, which automatically migrate when including associations with deals.
+Note that your private apps (one for Prod and one for Sandbox) will need to have all of the [required scopes](https://developers.hubspot.com/docs/api/working-with-oauth#scopes) to read all of the production objects and write all the sandbox objects you intend to migrate, respectively. I recommend including `e-commerce` scopes in both apps as well because that gives your private app access to products and line_items, which automatically migrate when including associations with deals.
 
 ## How to Set Up Your Environment
 
