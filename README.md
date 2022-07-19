@@ -6,9 +6,11 @@
 
 1. A Hubspot Sandbox Instance, with pipelines and object definitions recently synced.
    - You can learn how to set up a Hubspot Sandbox Instance here: [Hubspot Sandbox Instructions](https://knowledge.hubspot.com/account/set-up-a-hubspot-sandbox-account) 
-2. An API Key from a Production Hubspot Instance, called the `hubspot_prod_api_key` in code examples
-3. An API Key from a Sandbox Hubspot Instance, called the `hubspot_sandbox_api_key` in code examples
+2. An Access Token from a [private app](https://developers.hubspot.com/docs/api/private-apps) in the Production Hubspot Instance, called the `hubspot_prod_access_token` in code examples.
+3. An Access Token from a [private app](https://developers.hubspot.com/docs/api/private-apps) in the Sandbox Hubspot Instance, called the `hubspot_sandbox_access_token` in code examples
 4. The ability to run Python locally or remotely
+
+Note that your private app will need to have all of the [required scopes](https://developers.hubspot.com/docs/api/working-with-oauth#scopes) to read all of the production objects and write all the sandbox objects you intend to migrate. I recommend including `e-commerce` scopes in both apps as well because that gives your private app access to products and line_items, which automatically migrate when including associations with deals.
 
 ## How to Set Up Your Environment
 
@@ -45,8 +47,8 @@ Generally speaking, testing a process in Hubspot centers on one particular objec
 ### import the module
 from hubspot_prod_to_sandbox import HubspotSandboxMigrator
 
-### instantiate the migrator with your prod API key and sandbox API Key
-migrator = HubspotSandboxMigrator(hubspot_prod_api_key,hubspot_sandbox_api_key)
+### instantiate the migrator with your prod private app Access Token and sandbox private app Access Token
+migrator = HubspotSandboxMigrator(hubspot_prod_access_token,hubspot_sandbox_access_token)
 
 migrator.migrate_object(hs_object='contacts', ### What do you want to be your Anchor Object?
                         limit=2, ### How many objects do you want migrated
@@ -79,7 +81,7 @@ python -m ipykernel install --user --name=venv
 # so you will need to run this command in any new shell session.
 source ./venv/bin/activate
 # Run your migrator from production to sandbox
-python run_migrator.py --production hubspot_prod_api_key --sandbox hubspot_sandbox_api_key --limit 2 --associations True --fake-data True --object contacts
+python run_migrator.py --production hubspot_prod_access_token --sandbox hubspot_sandbox_access_token --limit 2 --associations True --fake-data True --object contacts
 ```
 
 ##### Cleaning up your sandbox objects at the command line
@@ -87,7 +89,7 @@ python run_migrator.py --production hubspot_prod_api_key --sandbox hubspot_sandb
 # so you will need to run this command in any new shell session.
 source ./venv/bin/activate
 # Run your cleanup
-python run_clean_up.py --production hubspot_prod_api_key --sandbox hubspot_sandbox_api_key
+python run_clean_up.py --production hubspot_prod_access_token --sandbox hubspot_sandbox_access_token
 ```
 
 ### 3. Run it your way :) 
@@ -98,6 +100,7 @@ python run_clean_up.py --production hubspot_prod_api_key --sandbox hubspot_sandb
 - This code will only read from a Hubspot Production instance and write to a Sandbox instance. There are tests built into the code to prevent you from writing to Production. With that said, you can edit the code to do other things with the Hubspot API. Happy coding.
 - This code utilizes [SQLite](https://www.sqlite.org/index.html) to store information about what objects have been migrated and their corresponding associations between each other and between Prod and Sandbox. This means that a `.sqlite` file containing these mappings and associations will be stored in your repo after you run the code above. No PII is contained in this file.
 - This code has been designed so that people who interact with multiple Prod and Sandbox environments (like agency support teams) can work in the same GitHub project and keep the mappings and associations separated, such that data is not mixed between Prod and Sandbox of different companies or clients. The most important thing is to keep your Prod and Sandbox API keys straight. If you do that, everything else should take care of itself.
+- This code has been migrated to the new Hubspot API which requires using a [Private App Access Token](https://developers.hubspot.com/docs/api/private-apps) rather than an API Key, which will no longer be a valid method of authentication at the end of 2022. 
 
 ## Do you like this project?
 If you like this, shoot me an email at ross.katz@corrdyn.com to let me know how you're using it. 
@@ -112,8 +115,7 @@ I hope this is useful to you! I know it would have saved me a lot of time...
 - Account for custom objects
 - Test tickets and quotes to make sure they operate as expected
 - Make it so that running the migrator multiple times without cleaning up doesn't migrate the same objects over and over (because of the order in which Hubspot returns the objects)
-- Allow object owners and other references to contacts to be migrated
-- 
+- Allow object owners and other references to objects to be migrated inside properties
 
 
 
